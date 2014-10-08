@@ -3,34 +3,34 @@
 From [node2web](http://github.com/anodynos/node2web) collection,
 should/will be exposed as 'domain' to [bower](http://bower.io) for *browser* usage.
 
-browserify version: '3.24.10', build date 'Tue Sep 16 2014 02:22:10 GMT+0300 (EEST)' 
+browserify version: '3.46.1', build date 'Wed Oct 08 2014 17:30:43 GMT+0300 (EEST)' 
 **/
 !function(e){if("object"==typeof exports)module.exports=e();else if("function"==typeof define&&define.amd)define(e);else{var f;"undefined"!=typeof window?f=window:"undefined"!=typeof global?f=global:"undefined"!=typeof self&&(f=self),f.domain=e()}}(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(_dereq_,module,exports){
 /*global define:false require:false */
 module.exports = (function(){
-  // Import Events
-  var events = _dereq_('events');
+	// Import Events
+	var events = _dereq_('events');
 
-  // Export Domain
-  var domain = {};
-  domain.create = function(){
-    var d = new events.EventEmitter();
-    d.run = function(fn){
-      try {
-        fn();
-      }
-      catch (err) {
-        this.emit('error', err);
-      }
-      return this;
-    };
-    d.dispose = function(){
-      this.removeAllListeners();
-      return this;
-    };
-    return d;
-  };
-  return domain;
+	// Export Domain
+	var domain = {};
+	domain.createDomain = domain.create = function(){
+		var d = new events.EventEmitter();
+		d.run = function(fn){
+			try {
+				fn();
+			}
+			catch (err) {
+				this.emit('error', err);
+			}
+			return this;
+		};
+		d.dispose = function(){
+			this.removeAllListeners();
+			return this;
+		};
+		return d;
+	};
+	return domain;
 }).call(this);
 },{"events":2}],2:[function(_dereq_,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
@@ -92,10 +92,8 @@ EventEmitter.prototype.emit = function(type) {
       er = arguments[1];
       if (er instanceof Error) {
         throw er; // Unhandled 'error' event
-      } else {
-        throw TypeError('Uncaught, unspecified "error" event.');
       }
-      return false;
+      throw TypeError('Uncaught, unspecified "error" event.');
     }
   }
 
@@ -180,7 +178,10 @@ EventEmitter.prototype.addListener = function(type, listener) {
                     'leak detected. %d listeners added. ' +
                     'Use emitter.setMaxListeners() to increase limit.',
                     this._events[type].length);
-      console.trace();
+      if (typeof console.trace === 'function') {
+        // not supported in IE 10
+        console.trace();
+      }
     }
   }
 

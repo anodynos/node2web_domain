@@ -1,6 +1,6 @@
 {
  "name": "domain",
- "version": "3.24.10",
+ "version": "3.46.1",
  "main": "domain.min.js",
  "description": "'domain' nodejs core module browserify-ied with `--standalone domain`. Should support all module systems (commonjs, AMD & `window.domain`) - check browserify docs.",
  "keywords": [
